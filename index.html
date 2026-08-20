@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>서서연구소 단기 육아휴직 급여 계산기</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#f5f6f8;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
+.wrap{max-width:720px;margin:auto}
+.card{background:#fff;border:1px solid #e2e5e9;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef4ff;color:#2458c6;font-size:13px;font-weight:800}
+h1{font-size:26px;margin:10px 0 7px}
+.sub{color:#666;line-height:1.6;margin-bottom:22px}
+.field{margin:19px 0}
+label{display:block;font-weight:800;margin-bottom:8px}
+.money-input{position:relative}
+.money-input input{width:100%;padding:14px 46px 14px 14px;border:1px solid #ccd2d9;border-radius:10px;font-size:17px}
+.won{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-weight:700;color:#555}
+.periods{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.period{padding:14px;border:1px solid #ccd2d9;border-radius:11px;background:#fff;font-size:16px;font-weight:800;cursor:pointer}
+.period.active{background:#222;color:#fff;border-color:#222}
+.calendar{border:1px solid #d7dce2;border-radius:14px;padding:14px;background:#fff}
+.cal-head{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:12px}
+.nav{border:0;background:#f3f4f6;border-radius:9px;height:38px;font-size:24px;cursor:pointer}
+.ym{display:flex;justify-content:center;gap:8px}
+.ym select{padding:8px 10px;border:1px solid #ccd2d9;border-radius:9px;background:#fff;font-weight:800;font-size:15px}
+.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.week div{text-align:center;color:#777;font-size:13px;padding:7px 0}
+.day{height:42px;border:0;background:#fff;border-radius:9px;font-size:15px;cursor:pointer}
+.day:hover{background:#f0f3f7}
+.day.muted{color:#c2c6cc}
+.day.selected{background:#222;color:#fff;font-weight:900}
+.summary{margin-top:12px;padding:13px 14px;background:#f7f8fa;border-radius:10px;line-height:1.65}
+.summary b{font-size:16px}
+.calc{width:100%;padding:15px;border:0;border-radius:11px;background:#111;color:#fff;font-size:17px;font-weight:900;cursor:pointer;margin-top:8px}
+.result{display:none;margin-top:22px;padding:21px;background:#f7f8fa;border-radius:14px}
+.money{font-size:34px;font-weight:900;margin:5px 0 13px}
+.details{line-height:1.75}
+.formula{margin-top:14px;padding-top:14px;border-top:1px solid #ddd;color:#555;line-height:1.7}
+.notice{margin-top:18px;padding:15px;background:#fff8e9;border:1px solid #efd69e;border-radius:11px;font-size:13px;line-height:1.65}
+@media(max-width:560px){
+  body{padding:9px}.card{padding:17px}.money{font-size:30px}.ym select{padding:7px 5px;font-size:14px}.day{height:39px}
+}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<span class="badge">서서연구소 계산기 #001</span>
+<h1>단기 육아휴직 예상급여 계산기</h1>
+<div class="sub">
+월 통상임금과 휴직 시작일을 선택하면 <b>1주(7일)·2주(14일)</b> 예상급여를 간편하게 계산할 수 있습니다.
+</div>
+
+<div class="field">
+<label>① 월 통상임금</label>
+<div class="money-input">
+<input id="wageDisplay" type="text" inputmode="numeric" value="2,000,000" autocomplete="off">
+<span class="won">원</span>
+</div>
+<div style="font-size:13px;color:#777;margin-top:7px">
+입력금액은 자동으로 천 단위 쉼표가 표시됩니다. 현재 계산기는 일반 육아휴직 1~3개월차 기준 월 상한 250만원을 적용합니다.
+</div>
+</div>
+
+<div class="field">
+<label>② 휴직 시작일</label>
+<div class="calendar">
+<div class="cal-head">
+<button class="nav" onclick="moveMonth(-1)">‹</button>
+<div class="ym">
+<select id="yearSel" onchange="jumpYM()"></select>
+<select id="monthSel" onchange="jumpYM()"></select>
+</div>
+<button class="nav" onclick="moveMonth(1)">›</button>
+</div>
+<div class="week">
+<div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+</div>
+<div class="days" id="days"></div>
+</div>
+</div>
+
+<div class="field">
+<label>③ 사용기간</label>
+<div class="periods">
+<button id="p7" class="period active" onclick="setPeriod(7)">1주 (7일)</button>
+<button id="p14" class="period" onclick="setPeriod(14)">2주 (14일)</button>
+</div>
+</div>
+
+<div class="summary" id="dateSummary"></div>
+<button class="calc" onclick="calculate()">예상급여 계산하기</button>
+<div class="result" id="result"></div>
+
+<div class="notice">
+<b>계산 기준 안내</b><br>
+이 계산기는 적용 월 급여액 × 사용일수 ÷ 휴직 시작월의 실제 일수(28·29·30·31일)를 기준으로 계산하고, 최종 금액에서 10원 미만을 절사합니다.
+고용24 간편 모의계산은 내부 원단위 처리 방식에 따라 일부 사례에서 약 10원 정도 차이가 발생할 수 있습니다.
+</div>
+
+<div class="notice">
+<b>주의</b><br>
+본 계산기는 예상액 확인용입니다. 6+6 부모육아휴직제, 한부모 특례, 기존 육아휴직 사용기간에 따른 급여구간 변경 및 실제 수급자격 판정은 포함하지 않습니다.
+최종 지급액은 고용24 또는 관할 고용센터에서 확인하세요.
+</div>
+</div></div>
+
+<script>
+let selected=new Date(2027,1,25,12,0,0),viewY=2027,viewM=1,period=7;
+const CAP=2500000;
+
+function pad(n){return String(n).padStart(2,"0")}
+function fmt(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function addDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function trunc10(n){return Math.floor((n+1e-7)/10)*10}
+function numberOnly(s){return Number(String(s).replace(/[^\d]/g,""))||0}
+function comma(n){return n.toLocaleString("ko-KR")}
+
+const wageInput=document.getElementById("wageDisplay");
+wageInput.addEventListener("input",function(){
+  const n=numberOnly(this.value);
+  this.value=n?comma(n):"";
+});
+wageInput.addEventListener("focus",function(){setTimeout(()=>this.select(),0)});
+
+function initSelectors(){
+ const ys=document.getElementById("yearSel"),ms=document.getElementById("monthSel");
+ for(let y=2026;y<=2035;y++){let o=document.createElement("option");o.value=y;o.textContent=y+"년";ys.appendChild(o)}
+ for(let m=0;m<12;m++){let o=document.createElement("option");o.value=m;o.textContent=(m+1)+"월";ms.appendChild(o)}
+}
+function jumpYM(){viewY=+yearSel.value;viewM=+monthSel.value;renderCal()}
+function moveMonth(n){
+  viewM+=n;
+  if(viewM<0){viewM=11;viewY--}
+  if(viewM>11){viewM=0;viewY++}
+  viewY=Math.max(2026,Math.min(2035,viewY));
+  renderCal()
+}
+function renderCal(){
+ yearSel.value=viewY;monthSel.value=viewM;
+ const box=document.getElementById("days");box.innerHTML="";
+ const first=new Date(viewY,viewM,1,12),startDow=first.getDay(),dim=daysInMonth(viewY,viewM);
+ for(let i=0;i<startDow;i++){
+   let b=document.createElement("button");
+   b.className="day muted";b.disabled=true;box.appendChild(b)
+ }
+ for(let d=1;d<=dim;d++){
+   let b=document.createElement("button");b.className="day";b.textContent=d;
+   if(selected.getFullYear()===viewY&&selected.getMonth()===viewM&&selected.getDate()===d)b.classList.add("selected");
+   b.onclick=()=>{selected=new Date(viewY,viewM,d,12);renderCal();updateSummary()};
+   box.appendChild(b)
+ }
+ updateSummary();
+}
+function setPeriod(n){
+ period=n;
+ p7.classList.toggle("active",n===7);
+ p14.classList.toggle("active",n===14);
+ updateSummary()
+}
+function updateSummary(){
+ const end=addDays(selected,period-1);
+ dateSummary.innerHTML=`<b>휴직기간 ${fmt(selected)} ~ ${fmt(end)}</b><br>총 ${period}일 · 종료일 자동 계산`
+}
+function calculate(){
+ const wage=numberOnly(wageInput.value);
+ if(!wage){alert("월 통상임금을 입력해주세요.");return}
+ const divisor=daysInMonth(selected.getFullYear(),selected.getMonth());
+ const base=Math.min(wage,CAP);
+ const raw=base*period/divisor;
+ const pay=trunc10(raw);
+ const end=addDays(selected,period-1);
+
+ const r=document.getElementById("result");
+ r.style.display="block";
+ r.innerHTML=`<div>예상 육아휴직급여</div>
+ <div class="money">${comma(pay)}원</div>
+ <div class="details">
+ 통상임금: ${comma(wage)}원<br>
+ 적용 월 기준액: ${comma(base)}원${wage>CAP?" (월 상한 250만원 적용)":""}<br>
+ 휴직기간: ${fmt(selected)} ~ ${fmt(end)} (${period}일)<br>
+ 시작월 일수: ${divisor}일
+ </div>
+ <div class="formula">
+ <b>계산 과정</b><br>
+ ${comma(base)} × ${period} ÷ ${divisor}
+ = ${raw.toLocaleString("ko-KR",{minimumFractionDigits:1,maximumFractionDigits:1})}원<br>
+ 최종 예상액: 10원 미만 절사 → <b>${comma(pay)}원</b>
+ </div>`;
+}
+initSelectors();renderCal();
+</script>
+</body>
+</html>
