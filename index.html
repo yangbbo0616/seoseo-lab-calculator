@@ -3,113 +3,192 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>서서연구소 단기 육아휴직 예상급여 계산기 V3</title>
+<title>서서연구소 단기 육아휴직 예상급여 계산기</title>
 <style>
 *{box-sizing:border-box}
-:root{--ink:#172033;--muted:#7b8491;--line:#dce2ea;--soft:#f7f9fc;--accent:#2563eb;--accent2:#1d4ed8}
-body{margin:0;padding:14px;background:#eef2f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
-.calc-shell{max-width:540px;margin:0 auto;background:#fff;border:3px solid #1f2937;border-radius:22px;box-shadow:0 14px 32px rgba(15,23,42,.16);overflow:hidden}
-.calc-head{background:linear-gradient(135deg,#1f2937,#334155);color:#fff;padding:15px 17px 13px}
-.brand{font-size:11px;font-weight:800;letter-spacing:.02em;opacity:.78;margin-bottom:5px}
-.calc-head h1{margin:0;font-size:19px;line-height:1.32}.calc-head p{margin:4px 0 0;font-size:12px;opacity:.84;line-height:1.45}
-.calc-body{padding:14px 15px 15px}
-.step{display:grid;grid-template-columns:118px 1fr;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #edf0f4}
-.step:last-of-type{border-bottom:0}.step-label{font-size:13px;font-weight:850}.num{display:inline-flex;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;background:#eef2ff;color:#3149a8;font-size:12px;margin-right:5px}
-.money-wrap{position:relative}.control,.date-trigger{width:100%;height:39px;border:1px solid #cfd6df;border-radius:10px;background:#fff;padding:0 38px 0 11px;font-size:14px;color:#273043;outline:none}.control::placeholder{color:#b2b7c0}.control:focus,.date-trigger:focus{border-color:#8291a5;box-shadow:0 0 0 3px rgba(58,76,100,.08)}
-.won{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:#737b86;font-weight:750}.date-trigger{text-align:left;cursor:pointer;position:relative}.date-trigger:after{content:"📅";position:absolute;right:10px;top:8px;font-size:15px}.date-trigger.placeholder{color:#aeb4bd}.date-trigger.selected{color:#1f2937;font-weight:750}
-.calendar-pop{display:none;margin:8px 0 3px;padding:10px;border:1px solid #d9dfe8;border-radius:12px;background:#fff;box-shadow:0 8px 22px rgba(15,23,42,.09)}.calendar-pop.open{display:block}.cal-head{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:6px;margin-bottom:7px}.nav{height:31px;border:0;border-radius:8px;background:#f1f4f8;font-size:19px;cursor:pointer}.ym{text-align:center;font-size:13px;font-weight:850}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.week div{text-align:center;color:#8b94a1;font-size:10px;padding:4px 0}.day{height:30px;border:0;background:#fff;border-radius:8px;font-size:12px;cursor:pointer}.day:hover{background:#f1f5f9}.day.selected{background:#1f2937;color:#fff;font-weight:900}.day.muted{visibility:hidden}
-.periods{display:grid;grid-template-columns:1fr 1fr;gap:7px}.period{height:39px;border:1px solid #cfd6df;border-radius:11px;background:linear-gradient(#fff,#f6f8fb);font-size:13px;font-weight:850;color:#475569;cursor:pointer;box-shadow:0 2px 0 #d7dde5}.period.active{background:linear-gradient(#2f6feb,#1d4ed8);color:#fff;border-color:#1d4ed8;box-shadow:0 3px 0 #173d9c,0 5px 12px rgba(37,99,235,.18);transform:translateY(-1px)}
-.range{margin:10px 0 9px;padding:8px 10px;border-radius:10px;background:#f8fafc;border:1px dashed #d8dee8;font-size:12px;color:#596273;min-height:34px;display:flex;align-items:center}
-.calc-btn{width:100%;height:45px;border:0;border-radius:12px;background:#111827;color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #000,0 8px 15px rgba(15,23,42,.13)}.calc-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #000}
-.result-slot{min-height:88px;height:auto;margin-top:11px;border-radius:13px;border:1px solid #e1e6ed;background:#f8fafc;padding:10px 12px;display:flex;align-items:center;justify-content:center;text-align:center;color:#969eaa;font-size:12px}.result-slot.has{display:block;text-align:left;color:#1f2937;background:#f7fbff;border-color:#cfe0f6}.result-top{display:flex;align-items:end;justify-content:space-between;gap:10px}.result-title{font-size:11px;color:#697386;font-weight:700}.money{font-size:25px;font-weight:950;letter-spacing:-.02em;margin-top:2px}.period-txt{font-size:11px;color:#687386;text-align:right;line-height:1.4}.detail-btn{margin-top:7px;border:0;background:transparent;padding:0;color:#446180;font-size:11px;font-weight:800;cursor:pointer}.detail-wrap{
-  position:static;
-}
-
-.detail{
-  display:none;
-  margin-top:10px;
-  padding:10px 12px;
-  background:#fff;
-  border:1px solid #e4e8ee;
-  border-radius:10px;
-  font-size:11px;
-  line-height:1.65;
-  color:#56606f;
-}
-
-.detail.open{
-  display:block;
-  position:static;
-  width:100%;
-  box-shadow:none;
-}
-
-.result-slot{
-  min-height:88px;
-  height:auto;
-}
-.mini-note{margin-top:9px;font-size:10.5px;line-height:1.45;color:#8a929d;text-align:center}
-@media(max-width:440px){body{padding:8px}.calc-shell{border-width:2px;border-radius:18px}.calc-head{padding:13px 14px 11px}.calc-head h1{font-size:18px}.calc-body{padding:11px 12px 13px}.step{grid-template-columns:106px 1fr;gap:8px;padding:8px 0}.step-label{font-size:12px}.control,.date-trigger,.period{height:38px}.result-slot{height:84px}}
+:root{--blue:#0f57c7;--blue2:#0a45a3;--ink:#172033;--muted:#667085;--line:#d8e2ef;--soft:#f7faff;--green:#15833b;--greenSoft:#f1fbf5;--purple:#5b3fb2;--purpleSoft:#f7f4ff}
+body{margin:0;padding:14px;background:#eef4fb;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
+.wrap{max-width:980px;margin:0 auto}.shell{background:#fff;border:1px solid #cdd9ea;border-radius:22px;box-shadow:0 14px 34px rgba(16,54,105,.12);overflow:hidden}
+.head{padding:23px 26px 18px;border-bottom:1px solid #e6edf6;background:linear-gradient(180deg,#fff,#fafdff)}
+.brand{font-size:12px;font-weight:850;color:#0f57c7;margin-bottom:6px}.head h1{margin:0;font-size:30px;line-height:1.25;letter-spacing:-.04em}.head h1 b{color:#0f57c7}.head p{margin:7px 0 0;color:#4f5e73;font-size:15px;line-height:1.55}
+.main{display:grid;grid-template-columns:1fr;gap:12px;padding:18px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;align-self:start}.panel-title{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--blue),#1467e4);color:#fff;padding:10px 18px;font-size:18px;font-weight:900;border-bottom-right-radius:14px}
+.input-body{padding:17px 18px 18px}.field{margin-bottom:19px}.label{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;margin-bottom:8px}.num{display:inline-flex;width:25px;height:25px;border-radius:50%;align-items:center;justify-content:center;background:#0f57c7;color:#fff;font-size:13px}
+.money-wrap{position:relative}.control,.date-trigger{width:100%;height:50px;border:1px solid #cbd8e8;border-radius:10px;background:#fff;padding:0 46px 0 13px;font-size:20px;color:#1d2939;outline:none}.control:focus,.date-trigger:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}.control::placeholder{color:#a9b2bf}.won{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-weight:850}.hint{margin-top:7px;color:#67768b;font-size:12px;line-height:1.5}
+.date-trigger{text-align:left;cursor:pointer;position:relative}.date-trigger:after{content:"📅";position:absolute;right:12px;top:12px;font-size:20px}.date-trigger.placeholder{color:#a9b2bf}.date-trigger.selected{font-weight:800;color:#1d2939}
+.calendar{display:none;margin-top:9px;border:1px solid #d8e1ec;border-radius:12px;padding:10px;background:#fff;box-shadow:0 10px 25px rgba(15,23,42,.12)}.calendar.open{display:block}.cal-head{display:grid;grid-template-columns:34px 1fr 34px;gap:6px;align-items:center;margin-bottom:6px}.nav{height:32px;border:0;border-radius:8px;background:#eff4fa;font-size:20px;cursor:pointer}.ym{text-align:center;font-size:14px;font-weight:900}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.week div{text-align:center;color:#8a96a6;font-size:10px;padding:4px 0}.day{height:31px;border:0;background:#fff;border-radius:8px;font-size:12px;cursor:pointer}.day:hover{background:#eef5ff}.day.selected{background:#0f57c7;color:#fff;font-weight:900}.day.muted{visibility:hidden}
+.calc{width:100%;height:52px;border:0;border-radius:11px;background:linear-gradient(135deg,#0f57c7,#0a45a3);color:#fff;font-size:17px;font-weight:950;cursor:pointer;box-shadow:0 4px 10px rgba(15,87,199,.25)}.calc:active{transform:translateY(1px)}
+.results-body{padding:10px 10px 12px}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result-card{border-radius:14px;overflow:hidden;border:1px solid;min-width:0}.result-card.green{border-color:#57a66f;background:var(--greenSoft)}.result-card.purple{border-color:#8d78d1;background:var(--purpleSoft)}.result-head{padding:10px 13px;color:#fff;font-weight:950;font-size:17px}.green .result-head{background:var(--green)}.purple .result-head{background:var(--purple)}.result-inner{padding:12px 12px 13px;text-align:center;display:flex;flex-direction:column;justify-content:flex-start}.period-title{font-size:12px;font-weight:850;color:#364152}.period{font-size:18px;font-weight:900;margin:3px 0 7px;letter-spacing:-.025em;white-space:nowrap}.green .period,.green .money{color:var(--green)}.purple .period,.purple .money{color:var(--purple)}.result-label{font-size:12px;font-weight:800}.money{font-size:42px;font-weight:950;margin:1px 0 2px;letter-spacing:-.04em}.before{color:#98a2b3;font-size:13px;line-height:1.5;padding:18px 8px;margin:auto 0}.mini{display:none}.detail-btn{margin:0;border:0;background:transparent;color:#475467;font-size:11px;font-weight:900;cursor:pointer;min-height:30px}.detail-btn:disabled{opacity:.45;cursor:default}.detail-slot{display:none;margin-top:4px}.detail-slot.open{display:block}.detail.placeholder-detail{display:none}.detail{margin:0;padding:8px 10px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:9px;text-align:left;font-size:10.5px;line-height:1.45;color:#596579}.detail-grid{display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:center}.detail-grid .v{text-align:right;font-weight:750;color:#344054}.detail-total{margin-top:6px;padding-top:6px;border-top:1px dashed #cfd6df;display:flex;justify-content:space-between;gap:8px;font-weight:900}
+.notice{margin:0 18px 18px;padding:13px 15px;border:1px solid #dbe5f2;border-radius:12px;background:#f8fbff;font-size:12px;line-height:1.65;color:#526173}.notice b{color:#0f57c7}.foot{padding:0 18px 19px;text-align:center;color:#7c8797;font-size:11px;line-height:1.55}
+@media(max-width:760px){body{padding:8px}.head{padding:18px 16px 15px}.head h1{font-size:23px}.head p{font-size:13px}.main{padding:10px;gap:10px}.result-grid{grid-template-columns:1fr 1fr;gap:8px}.panel-title{font-size:16px}.money{font-size:38px}.period{font-size:15px}.result-inner{padding:11px 9px 12px}.detail{font-size:10px;padding:7px 8px}}
+@media(max-width:500px){.result-grid{grid-template-columns:1fr}.control,.date-trigger{font-size:17px}.head h1{font-size:21px}.result-inner{padding:10px 10px 11px}.money{font-size:40px}.period{font-size:15px;margin:2px 0 5px}.result-label,.period-title{font-size:11px}.detail-btn{min-height:28px}.notice{margin:0 10px 12px}.foot{padding:0 10px 14px}}
 </style>
 </head>
 <body>
-<div class="calc-shell">
-  <div class="calc-head">
-    <div class="brand">서서연구소 계산기 #001</div>
-    <h1>단기 육아휴직 예상급여 계산기</h1>
-    <p>3가지만 입력하면 1주·2주 예상급여를 바로 확인할 수 있습니다.</p>
-  </div>
-  <div class="calc-body">
-    <div class="step">
-      <div class="step-label"><span class="num">1</span>월 통상임금</div>
-      <div class="money-wrap"><input id="wageDisplay" class="control" type="text" inputmode="numeric" placeholder="금액 입력" autocomplete="off"><span class="won">원</span></div>
+<div class="wrap">
+  <div class="shell">
+    <div class="head">
+      <div class="brand">서서연구소 계산기 #001</div>
+      <h1>단기 육아휴직 <b>예상급여 계산기</b></h1>
+      <p>월 통상임금과 휴직 시작일만 입력하면 <b>1주 예상급여(7일)</b>와 <b>2주 예상급여(14일)</b>를 한 번에 확인할 수 있습니다.</p>
     </div>
-    <div class="step">
-      <div class="step-label"><span class="num">2</span>휴직 시작일</div>
-      <div>
-        <button id="dateTrigger" class="date-trigger placeholder" type="button" onclick="toggleCalendar()">날짜 선택</button>
-        <div id="calendarPop" class="calendar-pop">
-          <div class="cal-head"><button class="nav" type="button" onclick="moveMonth(-1)">‹</button><div id="ymText" class="ym"></div><button class="nav" type="button" onclick="moveMonth(1)">›</button></div>
-          <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
-          <div class="days" id="days"></div>
+
+    <div class="main">
+      <section class="panel">
+        <div class="panel-title">✎ 정보 입력</div>
+        <div class="input-body">
+          <div class="field">
+            <div class="label"><span class="num">1</span>월 통상임금 입력</div>
+            <div class="money-wrap">
+              <input id="wage" class="control" type="text" inputmode="numeric" placeholder="예) 3,000,000" autocomplete="off">
+              <span class="won">원</span>
+            </div>
+            <div class="hint"><strong>※ 세후 실수령액이 아닌 세전 통상임금을 입력하세요.</strong><br>입력금액은 자동으로 천 단위 쉼표가 표시됩니다. 일반 육아휴직 1~3개월차 기준 월 상한 250만원을 적용합니다.</div>
+          </div>
+
+          <div class="field">
+            <div class="label"><span class="num">2</span>휴직 시작일 선택</div>
+            <button id="dateTrigger" class="date-trigger placeholder" type="button">날짜 선택</button>
+            <div id="calendar" class="calendar">
+              <div class="cal-head"><button id="prev" class="nav" type="button">‹</button><div id="ym" class="ym"></div><button id="next" class="nav" type="button">›</button></div>
+              <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+              <div id="days" class="days"></div>
+            </div>
+            <div class="hint">선택한 시작일을 기준으로 7일·14일 종료일을 자동 계산합니다.</div>
+          </div>
+
+          <button id="calc" class="calc" type="button">▦ 예상급여 계산하기</button>
         </div>
-      </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">계산 결과</div>
+        <div class="results-body">
+          <div class="result-grid">
+            <article class="result-card green">
+              <div class="result-head">1주 예상급여 (7일)</div>
+              <div id="r7" class="result-inner">
+                <div class="period-title">휴직 기간</div>
+                <div class="period" data-period>－</div>
+                <div class="result-label">예상급여</div>
+                <div class="money" data-money>0원</div>
+                <button class="detail-btn" type="button" disabled>계산 과정 자세히 보기 ▾</button>
+                <div class="detail-slot"></div>
+              </div>
+            </article>
+            <article class="result-card purple">
+              <div class="result-head">2주 예상급여 (14일)</div>
+              <div id="r14" class="result-inner">
+                <div class="period-title">휴직 기간</div>
+                <div class="period" data-period>－</div>
+                <div class="result-label">예상급여</div>
+                <div class="money" data-money>0원</div>
+                <button class="detail-btn" type="button" disabled>계산 과정 자세히 보기 ▾</button>
+                <div class="detail-slot"></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
     </div>
-    <div class="step">
-      <div class="step-label"><span class="num">3</span>사용기간</div>
-      <div class="periods"><button id="p7" class="period active" type="button" onclick="setPeriod(7)">1주 · 7일</button><button id="p14" class="period" type="button" onclick="setPeriod(14)">2주 · 14일</button></div>
-    </div>
-    <div id="dateSummary" class="range">휴직 시작일을 선택해주세요.</div>
-    <button class="calc-btn" type="button" onclick="calculate()">예상급여 계산하기</button>
-    <div class="detail-wrap">
-      <div id="result" class="result-slot">계산 결과가 여기에 표시됩니다.</div>
-      <div id="detail" class="detail"></div>
-    </div>
-    <div class="mini-note">일반 육아휴직 1~3개월차 · 월 상한 250만원 기준 · 예상액 확인용</div>
+
+    <div class="notice"><b>계산 기준 안내</b><br>현재 서서연구소 계산기의 검증된 계산방식을 그대로 사용합니다. 일반 육아휴직 1~3개월차 기준으로 월 통상임금과 월 상한 250만원을 적용하고, 휴직 시작월의 실제 일수(28·29·30·31일)를 기준으로 일할 계산한 뒤 10원 미만을 절사합니다. 계산 결과는 예상금액이며 실제 지급액은 개인별 조건·특례 적용 여부 등에 따라 달라질 수 있습니다.</div>
+    <div class="foot">6+6 부모육아휴직제·한부모 특례·기존 육아휴직 사용기간에 따른 급여구간 변경 및 실제 수급자격 판정은 포함하지 않습니다.<br>최종 지급액은 고용24 또는 관할 고용센터에서 확인하세요.</div>
   </div>
 </div>
 <script>
-let selected=null;
-const today=new Date();
-let viewY=Math.max(2026,today.getFullYear()), viewM=today.getMonth(), period=7;
-const CAP=2500000;
-function pad(n){return String(n).padStart(2,'0')}
-function fmt(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
-function addDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
-function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
-function trunc10(n){return Math.floor((n+1e-7)/10)*10}
-function numberOnly(s){return Number(String(s).replace(/[^\d]/g,''))||0}
-function comma(n){return n.toLocaleString('ko-KR')}
-const wageInput=document.getElementById('wageDisplay');
-wageInput.addEventListener('input',function(){const n=numberOnly(this.value);this.value=n?comma(n):''});
-function toggleCalendar(){document.getElementById('calendarPop').classList.toggle('open');renderCal()}
-function moveMonth(n){viewM+=n;if(viewM<0){viewM=11;viewY--}if(viewM>11){viewM=0;viewY++}viewY=Math.max(2026,Math.min(2035,viewY));renderCal()}
-function renderCal(){document.getElementById('ymText').textContent=`${viewY}년 ${viewM+1}월`;const box=document.getElementById('days');box.innerHTML='';const first=new Date(viewY,viewM,1,12),startDow=first.getDay(),dim=daysInMonth(viewY,viewM);for(let i=0;i<startDow;i++){let b=document.createElement('button');b.className='day muted';b.disabled=true;box.appendChild(b)}for(let d=1;d<=dim;d++){let b=document.createElement('button');b.className='day';b.textContent=d;if(selected&&selected.getFullYear()===viewY&&selected.getMonth()===viewM&&selected.getDate()===d)b.classList.add('selected');b.onclick=()=>{selected=new Date(viewY,viewM,d,12);document.getElementById('dateTrigger').textContent=fmt(selected);document.getElementById('dateTrigger').classList.remove('placeholder');document.getElementById('dateTrigger').classList.add('selected');document.getElementById('calendarPop').classList.remove('open');updateSummary()};box.appendChild(b)}}
-function setPeriod(n){period=n;document.getElementById('p7').classList.toggle('active',n===7);document.getElementById('p14').classList.toggle('active',n===14);updateSummary()}
-function updateSummary(){const s=document.getElementById('dateSummary');if(!selected){s.textContent='휴직 시작일을 선택해주세요.';return}const end=addDays(selected,period-1);s.textContent=`휴직기간 ${fmt(selected)} ~ ${fmt(end)} · 총 ${period}일`}
-function calculate(){const wage=numberOnly(wageInput.value);if(!wage){alert('월 통상임금을 입력해주세요.');wageInput.focus();return}if(!selected){alert('휴직 시작일을 선택해주세요.');return}const divisor=daysInMonth(selected.getFullYear(),selected.getMonth());const base=Math.min(wage,CAP);const raw=base*period/divisor;const pay=trunc10(raw);const end=addDays(selected,period-1);const r=document.getElementById('result');r.className='result-slot has';r.innerHTML=`<div class="result-top"><div><div class="result-title">예상 육아휴직급여</div><div class="money">${comma(pay)}원</div></div><div class="period-txt">${fmt(selected)}<br>~ ${fmt(end)} · ${period}일</div></div><button class="detail-btn" type="button" onclick="toggleDetail()">계산 과정 자세히 보기 ▾</button>`;document.getElementById('detail').innerHTML=`통상임금: ${comma(wage)}원<br>적용 월 기준액: ${comma(base)}원${wage>CAP?' (월 상한 250만원 적용)':''}<br>시작월 일수: ${divisor}일<br><b>계산:</b> ${comma(base)} × ${period} ÷ ${divisor} = ${raw.toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1})}원<br>10원 미만 절사 → <b>${comma(pay)}원</b>`}
-function toggleDetail(){document.getElementById('detail').classList.toggle('open')}
-renderCal();updateSummary();
+(()=>{
+  'use strict';
+  const CAP=2500000;
+  let selected=null;
+  const now=new Date();
+  let viewY=Math.max(2026,now.getFullYear());
+  let viewM=now.getMonth();
+
+  const wage=document.getElementById('wage');
+  const dateTrigger=document.getElementById('dateTrigger');
+  const calendar=document.getElementById('calendar');
+  const ym=document.getElementById('ym');
+  const days=document.getElementById('days');
+  const r7=document.getElementById('r7');
+  const r14=document.getElementById('r14');
+
+  const pad=n=>String(n).padStart(2,'0');
+  const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+  const daysInMonth=(y,m)=>new Date(y,m+1,0).getDate();
+  const trunc10=n=>Math.floor((n+1e-7)/10)*10;
+  const numberOnly=s=>Number(String(s).replace(/[^\d]/g,''))||0;
+  const comma=n=>n.toLocaleString('ko-KR');
+
+  wage.addEventListener('input',()=>{const n=numberOnly(wage.value);wage.value=n?comma(n):''});
+  wage.addEventListener('focus',()=>setTimeout(()=>wage.select(),0));
+
+  function renderCalendar(){
+    ym.textContent=`${viewY}년 ${viewM+1}월`;
+    days.innerHTML='';
+    const first=new Date(viewY,viewM,1,12);
+    const startDow=first.getDay();
+    const dim=daysInMonth(viewY,viewM);
+    for(let i=0;i<startDow;i++){
+      const b=document.createElement('button');b.type='button';b.className='day muted';b.disabled=true;days.appendChild(b);
+    }
+    for(let d=1;d<=dim;d++){
+      const b=document.createElement('button');b.type='button';b.className='day';b.textContent=d;
+      if(selected&&selected.getFullYear()===viewY&&selected.getMonth()===viewM&&selected.getDate()===d)b.classList.add('selected');
+      b.addEventListener('click',()=>{
+        selected=new Date(viewY,viewM,d,12);
+        dateTrigger.textContent=fmt(selected);
+        dateTrigger.classList.remove('placeholder');
+        dateTrigger.classList.add('selected');
+        calendar.classList.remove('open');
+        renderCalendar();
+      });
+      days.appendChild(b);
+    }
+  }
+
+  dateTrigger.addEventListener('click',()=>{calendar.classList.toggle('open');renderCalendar()});
+  document.getElementById('prev').addEventListener('click',()=>{viewM--;if(viewM<0){viewM=11;viewY--}viewY=Math.max(2026,viewY);renderCalendar()});
+  document.getElementById('next').addEventListener('click',()=>{viewM++;if(viewM>11){viewM=0;viewY++}viewY=Math.min(2035,viewY);renderCalendar()});
+
+  function calcFor(daysCount,wageValue){
+    const divisor=daysInMonth(selected.getFullYear(),selected.getMonth());
+    const base=Math.min(wageValue,CAP);
+    const raw=base*daysCount/divisor;
+    const pay=trunc10(raw);
+    const end=addDays(selected,daysCount-1);
+    return {daysCount,divisor,base,raw,pay,end};
+  }
+
+  function renderCard(container,x,wageValue){
+    const capNote=wageValue>CAP?' (월 상한 250만원 적용)':'';
+    container.querySelector('[data-period]').textContent=`${fmt(selected)} ~ ${fmt(x.end)} (${x.daysCount}일)`;
+    container.querySelector('[data-money]').textContent=`${comma(x.pay)}원`;
+    const btn=container.querySelector('.detail-btn');
+    const slot=container.querySelector('.detail-slot');
+    btn.disabled=false;
+    btn.textContent='계산 과정 자세히 보기 ▾';
+    slot.innerHTML=`<div class="detail"><div class="detail-grid"><span>통상임금(입력)</span><span class="v">${comma(wageValue)}원</span><span>적용 월 기준액${wageValue>CAP?' (상한 적용)':''}</span><span class="v">${comma(x.base)}원</span><span>시작월 일수</span><span class="v">${x.divisor}일</span><span>지급일수</span><span class="v">${x.daysCount}일</span></div><div class="detail-total"><span>예상급여</span><span>${comma(x.pay)}원</span></div></div>`;
+    btn.onclick=()=>{
+      const open=slot.classList.toggle('open');
+      btn.textContent=open?'계산 과정 접기 ▴':'계산 과정 자세히 보기 ▾';
+    };
+  }
+
+  document.getElementById('calc').addEventListener('click',()=>{
+    const wageValue=numberOnly(wage.value);
+    if(!wageValue){alert('월 통상임금을 입력해주세요.');wage.focus();return}
+    if(!selected){alert('휴직 시작일을 선택해주세요.');return}
+    const x7=calcFor(7,wageValue);
+    const x14=calcFor(14,wageValue);
+    renderCard(r7,x7,wageValue);
+    renderCard(r14,x14,wageValue);
+    document.querySelector('.result-grid').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+
+  renderCalendar();
+})();
 </script>
 </body>
 </html>
